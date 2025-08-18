@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="module-header">
+    <h1 class="page-title">Shelf Life</h1>
+    <p class="page-description">Controle de vida útil e validades</p>
+</div>
+
+<div class="module-content">
+    <!-- Alertas -->
+    <div class="alerts-section">
+        <div class="alert alert-warning">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <h4>7 produtos vencendo em breve</h4>
+                <p>Produtos com validade inferior a 30 dias</p>
+            </div>
+            <button class="alert-action">Ver detalhes</button>
+        </div>
+    </div>
+
+    <!-- Filtros e Ações -->
+    <div class="toolbar">
+        <div class="toolbar-filters">
+            <div class="filter-group">
+                <label for="statusValidade">Status de Validade:</label>
+                <select id="statusValidade" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="ok">Válido</option>
+                    <option value="warning">Vencendo (30 dias)</option>
+                    <option value="critical">Vencendo (7 dias)</option>
+                    <option value="expired">Vencido</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="categoria">Categoria:</label>
+                <select id="categoria" class="form-select">
+                    <option value="">Todas</option>
+                    <option value="medicamentos">Medicamentos</option>
+                    <option value="cosmeticos">Cosméticos</option>
+                    <option value="alimentos">Alimentos</option>
+                </select>
+            </div>
+        </div>
+        <div class="toolbar-actions">
+            <button class="btn btn-secondary">
+                <span class="btn-icon">📊</span>
+                Relatório de Validade
+            </button>
+            <button class="btn btn-primary">
+                <span class="btn-icon">➕</span>
+                Novo Produto
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabela de Produtos -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Lote</th>
+                    <th>Data de Fabricação</th>
+                    <th>Data de Validade</th>
+                    <th>Dias Restantes</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            <strong>Vitamina C 1000mg</strong>
+                            <br><small>VIT-001</small>
+                        </div>
+                    </td>
+                    <td>LT202401001</td>
+                    <td>15/01/2024</td>
+                    <td>15/01/2026</td>
+                    <td>
+                        <span class="days-remaining ok">365 dias</span>
+                    </td>
+                    <td>
+                        <span class="status-badge active">Válido</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-icon-small" title="Editar">✏️</button>
+                            <button class="btn-icon-small" title="Histórico">📋</button>
+                            <button class="btn-icon-small" title="Alertas">🔔</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            <strong>Shampoo Hidratante</strong>
+                            <br><small>SH-002</small>
+                        </div>
+                    </td>
+                    <td>LT202403015</td>
+                    <td>20/03/2024</td>
+                    <td>20/09/2025</td>
+                    <td>
+                        <span class="days-remaining warning">25 dias</span>
+                    </td>
+                    <td>
+                        <span class="status-badge warning">Vencendo</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-icon-small" title="Editar">✏️</button>
+                            <button class="btn-icon-small" title="Histórico">📋</button>
+                            <button class="btn-icon-small" title="Alertas">🔔</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            <strong>Proteína em Pó</strong>
+                            <br><small>PR-003</small>
+                        </div>
+                    </td>
+                    <td>LT202408001</td>
+                    <td>10/08/2024</td>
+                    <td>25/08/2025</td>
+                    <td>
+                        <span class="days-remaining critical">5 dias</span>
+                    </td>
+                    <td>
+                        <span class="status-badge critical">Crítico</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-icon-small" title="Editar">✏️</button>
+                            <button class="btn-icon-small" title="Histórico">📋</button>
+                            <button class="btn-icon-small" title="Alertas">🔔</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="stats-section">
+        <h2 class="section-title">Estatísticas de Shelf Life</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-info">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Total de Produtos</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <div class="stat-value">132</div>
+                    <div class="stat-label">Produtos Válidos</div>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-info">
+                    <div class="stat-value">17</div>
+                    <div class="stat-label">Vencendo (30 dias)</div>
+                </div>
+            </div>
+            <div class="stat-card critical">
+                <div class="stat-icon">🚨</div>
+                <div class="stat-info">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Críticos (7 dias)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

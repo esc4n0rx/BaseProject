@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1 class="page-title">Dashboard Principal</h1>
+    <p class="page-description">Selecione um módulo para começar</p>
+</div>
+
+<div class="tiles-container">
+    <!-- Card Embalagem -->
+    <div class="tile-card" data-module="embalagem">
+        <div class="tile-header">
+            <div class="tile-icon embalagem-icon">📦</div>
+            <div class="tile-info">
+                <h3 class="tile-title">Embalagem</h3>
+                <p class="tile-subtitle">Gestão de embalagens e materiais</p>
+            </div>
+        </div>
+        <div class="tile-content">
+            <p class="tile-description">
+                Controle completo de embalagens, materiais e especificações técnicas.
+            </p>
+            <div class="tile-metrics">
+                <div class="metric">
+                    <span class="metric-value">24</span>
+                    <span class="metric-label">Itens ativos</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">3</span>
+                    <span class="metric-label">Pendentes</span>
+                </div>
+            </div>
+        </div>
+        <div class="tile-footer">
+            <button class="tile-action" onclick="navigateToModule('embalagem')">
+                <span>Acessar módulo</span>
+                <span class="action-icon">→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Card Shelf Life -->
+    <div class="tile-card" data-module="shelf-life">
+        <div class="tile-header">
+            <div class="tile-icon shelf-life-icon">⏰</div>
+            <div class="tile-info">
+                <h3 class="tile-title">Shelf Life</h3>
+                <p class="tile-subtitle">Controle de vida útil e validades</p>
+            </div>
+        </div>
+        <div class="tile-content">
+            <p class="tile-description">
+                Monitoramento de prazos de validade e controle de shelf life de produtos.
+            </p>
+            <div class="tile-metrics">
+                <div class="metric">
+                    <span class="metric-value">156</span>
+                    <span class="metric-label">Produtos</span>
+                </div>
+                <div class="metric urgent">
+                    <span class="metric-value">7</span>
+                    <span class="metric-label">Vencendo</span>
+                </div>
+            </div>
+        </div>
+        <div class="tile-footer">
+            <button class="tile-action" onclick="navigateToModule('shelf-life')">
+                <span>Acessar módulo</span>
+                <span class="action-icon">→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Card Configurações -->
+    <div class="tile-card" data-module="configuracoes">
+        <div class="tile-header">
+            <div class="tile-icon config-icon">⚙️</div>
+            <div class="tile-info">
+                <h3 class="tile-title">Configurações</h3>
+                <p class="tile-subtitle">Parâmetros e customizações</p>
+            </div>
+        </div>
+        <div class="tile-content">
+            <p class="tile-description">
+                Configurações gerais do sistema, usuários e personalizações.
+            </p>
+            <div class="tile-metrics">
+                <div class="metric">
+                    <span class="metric-value">12</span>
+                    <span class="metric-label">Usuários</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">5</span>
+                    <span class="metric-label">Perfis</span>
+                </div>
+            </div>
+        </div>
+        <div class="tile-footer">
+            <button class="tile-action" onclick="navigateToModule('configuracoes')">
+                <span>Acessar módulo</span>
+                <span class="action-icon">→</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <h2 class="section-title">Ações Rápidas</h2>
+    <div class="action-buttons">
+        <button class="action-btn primary">
+            <span class="btn-icon">➕</span>
+            <span>Novo Item</span>
+        </button>
+        <button class="action-btn secondary">
+            <span class="btn-icon">📊</span>
+            <span>Relatórios</span>
+        </button>
+        <button class="action-btn secondary">
+            <span class="btn-icon">🔍</span>
+            <span>Busca Avançada</span>
+        </button>
+    </div>
+</div>
+{% endblock %}

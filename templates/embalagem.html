@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="module-header">
+    <h1 class="page-title">Embalagem</h1>
+    <p class="page-description">Gestão de embalagens e materiais</p>
+</div>
+
+<div class="module-content">
+    <!-- Filtros e Ações -->
+    <div class="toolbar">
+        <div class="toolbar-filters">
+            <div class="filter-group">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                    <option value="pendente">Pendente</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="tipoFilter">Tipo:</label>
+                <select id="tipoFilter" class="form-select">
+                    <option value="">Todos os tipos</option>
+                    <option value="primaria">Primária</option>
+                    <option value="secundaria">Secundária</option>
+                    <option value="terciaria">Terciária</option>
+                </select>
+            </div>
+        </div>
+        <div class="toolbar-actions">
+            <button class="btn btn-secondary">
+                <span class="btn-icon">📊</span>
+                Relatório
+            </button>
+            <button class="btn btn-primary">
+                <span class="btn-icon">➕</span>
+                Nova Embalagem
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Embalagem -->
+    <div class="cards-grid">
+        <div class="data-card">
+            <div class="card-header">
+                <h3 class="card-title">Embalagem Primária - Frasco 50ml</h3>
+                <span class="status-badge active">Ativo</span>
+            </div>
+            <div class="card-content">
+                <div class="card-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Código:</span>
+                        <span class="detail-value">EMB-001</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Material:</span>
+                        <span class="detail-value">Vidro borossilicato</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Capacidade:</span>
+                        <span class="detail-value">50ml</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Fornecedor:</span>
+                        <span class="detail-value">Vidros Brasil Ltda</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-link">Editar</button>
+                <button class="btn-link">Especificações</button>
+                <button class="btn-link">Histórico</button>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-header">
+                <h3 class="card-title">Embalagem Secundária - Caixa Papelão</h3>
+                <span class="status-badge pending">Pendente</span>
+            </div>
+            <div class="card-content">
+                <div class="card-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Código:</span>
+                        <span class="detail-value">EMB-002</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Material:</span>
+                        <span class="detail-value">Papelão ondulado</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dimensões:</span>
+                        <span class="detail-value">30x20x10 cm</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Fornecedor:</span>
+                        <span class="detail-value">Embalagens Sul</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-link">Editar</button>
+                <button class="btn-link">Especificações</button>
+                <button class="btn-link">Histórico</button>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-header">
+                <h3 class="card-title">Embalagem Terciária - Pallet</h3>
+                <span class="status-badge active">Ativo</span>
+            </div>
+            <div class="card-content">
+                <div class="card-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Código:</span>
+                        <span class="detail-value">EMB-003</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Material:</span>
+                        <span class="detail-value">Madeira tratada</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Dimensões:</span>
+                        <span class="detail-value">120x100x15 cm</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Capacidade:</span>
+                        <span class="detail-value">1000kg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-link">Editar</button>
+                <button class="btn-link">Especificações</button>
+                <button class="btn-link">Histórico</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

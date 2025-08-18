@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="module-header">
+    <h1 class="page-title">Configurações</h1>
+    <p class="page-description">Parâmetros e customizações do sistema</p>
+</div>
+
+<div class="module-content">
+    <!-- Navegação por Abas -->
+    <div class="tab-navigation">
+        <button class="tab-button active" data-tab="geral">
+            <span class="tab-icon">⚙️</span>
+            Geral
+        </button>
+        <button class="tab-button" data-tab="usuarios">
+            <span class="tab-icon">👥</span>
+            Usuários
+        </button>
+        <button class="tab-button" data-tab="notificacoes">
+            <span class="tab-icon">🔔</span>
+            Notificações
+        </button>
+        <button class="tab-button" data-tab="sistema">
+            <span class="tab-icon">🖥️</span>
+            Sistema
+        </button>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content">
+        <!-- Aba Geral -->
+        <div class="tab-panel active" id="geral">
+            <div class="settings-section">
+                <h3 class="section-title">Configurações Gerais</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="empresaNome">Nome da Empresa</label>
+                        <input type="text" id="empresaNome" class="form-input" value="Minha Empresa Ltda">
+                    </div>
+                    <div class="form-group">
+                        <label for="timezone">Fuso Horário</label>
+                        <select id="timezone" class="form-select">
+                            <option value="America/Sao_Paulo" selected>America/São Paulo (UTC-3)</option>
+                            <option value="America/New_York">America/New York (UTC-5)</option>
+                            <option value="Europe/London">Europe/London (UTC+0)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="idioma">Idioma</label>
+                        <select id="idioma" class="form-select">
+                            <option value="pt-BR" selected>Português (Brasil)</option>
+                            <option value="en-US">English (United States)</option>
+                            <option value="es-ES">Español (España)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tema">Tema Padrão</label>
+                        <select id="tema" class="form-select">
+                            <option value="light" selected>Claro</option>
+                            <option value="dark">Escuro</option>
+                            <option value="auto">Automático</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary">Salvar Alterações</button>
+                    <button class="btn btn-secondary">Restaurar Padrão</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="section-title">Configurações de Shelf Life</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="alertaDias">Alerta de Validade (dias)</label>
+                        <input type="number" id="alertaDias" class="form-input" value="30" min="1" max="365">
+                        <small class="form-help">Dias antes do vencimento para gerar alerta</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="criticoDias">Alerta Crítico (dias)</label>
+                        <input type="number" id="criticoDias" class="form-input" value="7" min="1" max="30">
+                        <small class="form-help">Dias antes do vencimento para alerta crítico</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Usuários -->
+        <div class="tab-panel" id="usuarios">
+            <div class="settings-section">
+                <div class="section-header">
+                    <h3 class="section-title">Usuários do Sistema</h3>
+                    <button class="btn btn-primary">
+                        <span class="btn-icon">➕</span>
+                        Novo Usuário
+                    </button>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Perfil</th>
+                                <th>Status</th>
+                                <th>Último Acesso</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">👤</div>
+                                        <div>
+                                            <strong>João Silva</strong>
+                                            <br><small>Administrador</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>joao.silva@empresa.com</td>
+                                <td><span class="role-badge admin">Administrador</span></td>
+                                <td><span class="status-badge active">Ativo</span></td>
+                                <td>18/08/2025 14:30</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="btn-icon-small" title="Editar">✏️</button>
+                                        <button class="btn-icon-small" title="Permissões">🔒</button>
+                                        <button class="btn-icon-small" title="Desativar">❌</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">👤</div>
+                                        <div>
+                                            <strong>Maria Santos</strong>
+                                            <br><small>Operador</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>maria.santos@empresa.com</td>
+                                <td><span class="role-badge operator">Operador</span></td>
+                                <td><span class="status-badge active">Ativo</span></td>
+                                <td>18/08/2025 09:15</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="btn-icon-small" title="Editar">✏️</button>
+                                        <button class="btn-icon-small" title="Permissões">🔒</button>
+                                        <button class="btn-icon-small" title="Desativar">❌</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">👤</div>
+                                        <div>
+                                            <strong>Carlos Oliveira</strong>
+                                            <br><small>Consultor</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>carlos.oliveira@empresa.com</td>
+                                <td><span class="role-badge viewer">Consultor</span></td>
+                                <td><span class="status-badge inactive">Inativo</span></td>
+                                <td>15/08/2025 16:45</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="btn-icon-small" title="Editar">✏️</button>
+                                        <button class="btn-icon-small" title="Permissões">🔒</button>
+                                        <button class="btn-icon-small" title="Ativar">✅</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Notificações -->
+        <div class="tab-panel" id="notificacoes">
+            <div class="settings-section">
+                <h3 class="section-title">Configurações de Notificações</h3>
+                
+                <div class="notification-settings">
+                    <div class="setting-group">
+                        <h4 class="setting-group-title">Notificações de Email</h4>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Alertas de Shelf Life</strong>
+                                <p>Receber emails quando produtos estão próximos do vencimento</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Relatórios Semanais</strong>
+                                <p>Resumo semanal das atividades do sistema</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Novos Usuários</strong>
+                                <p>Notificar quando novos usuários são cadastrados</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h4 class="setting-group-title">Notificações do Sistema</h4>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Alertas Críticos</strong>
+                                <p>Notificações urgentes no sistema</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <strong>Atualizações de Status</strong>
+                                <p>Mudanças de status de produtos e embalagens</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Sistema -->
+        <div class="tab-panel" id="sistema">
+            <div class="settings-section">
+                <h3 class="section-title">Informações do Sistema</h3>
+                
+                <div class="system-info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">🖥️</div>
+                        <div class="info-content">
+                            <h4>Versão do Sistema</h4>
+                            <p>v1.0.0</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🗄️</div>
+                        <div class="info-content">
+                            <h4>Banco de Dados</h4>
+                            <p>PostgreSQL 14.2</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🔧</div>
+                        <div class="info-content">
+                            <h4>Última Atualização</h4>
+                            <p>15/08/2025</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">📊</div>
+                        <div class="info-content">
+                            <h4>Uso de Storage</h4>
+                            <p>2.3 GB / 10 GB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="system-actions">
+                    <h4 class="section-subtitle">Ações do Sistema</h4>
+                    <div class="action-buttons-vertical">
+                        <button class="btn btn-secondary btn-full">
+                            <span class="btn-icon">🔄</span>
+                            Verificar Atualizações
+                        </button>
+                        <button class="btn btn-secondary btn-full">
+                            <span class="btn-icon">💾</span>
+                            Backup do Sistema
+                        </button>
+                        <button class="btn btn-secondary btn-full">
+                            <span class="btn-icon">🧹</span>
+                            Limpeza de Cache
+                        </button>
+                        <button class="btn btn-warning btn-full">
+                            <span class="btn-icon">🔄</span>
+                            Reiniciar Serviços
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

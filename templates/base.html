@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} - {% endif %}SAP Fiori Dashboard</title>
+    
+    <!-- SAP Fiori Icons -->
+    <link rel="stylesheet" href="https://sdk.openui5.org/resources/sap/ui/core/themes/sap_fiori_3/base.css">
+    <link rel="stylesheet" href="https://sdk.openui5.org/resources/sap/m/themes/sap_fiori_3/library.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fiori-style.css') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+</head>
+<body>
+    <!-- Header/Shell Bar -->
+    <header class="shell-bar">
+        <div class="shell-bar-brand">
+            <span class="brand-icon">📊</span>
+            <span class="brand-title">SAP Fiori Dashboard</span>
+        </div>
+        
+        <div class="shell-bar-actions">
+            <button class="shell-bar-action theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                <span class="theme-icon">🌓</span>
+            </button>
+            <button class="shell-bar-action user-menu" aria-label="Menu do usuário">
+                <span class="user-icon">👤</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% if request.endpoint != 'index' %}
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb-nav">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('index') }}" class="breadcrumb-link">
+                        <span class="breadcrumb-icon">🏠</span>
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <span>{{ title }}</span>
+                </li>
+            </ol>
+        </nav>
+        {% endif %}
+
+        <!-- Page Content -->
+        <div class="page-content">
+            {% block content %}
+            <div class="content-placeholder">
+                <h2>Conteúdo não encontrado</h2>
+                <p>Esta página ainda não possui conteúdo específico.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Voltar ao Dashboard</a>
+            </div>
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 SAP Fiori Dashboard. Todos os direitos reservados.</p>
+            <p>Versão 1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
