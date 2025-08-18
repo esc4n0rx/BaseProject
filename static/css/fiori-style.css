@@ -653,6 +653,8 @@ body {
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.8125rem;
+  min-width: 1200px; /* Largura mínima para garantir espaço */
 }
 
 .data-table th,
@@ -666,13 +668,85 @@ body {
   background: var(--sap-background);
   font-weight: 600;
   color: var(--sap-text-color);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
+  padding: var(--sap-spacing-xs);
+  border-bottom: 2px solid var(--sap-border-color);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .data-table td {
   color: var(--sap-text-color);
-  font-size: var(--sap-font-size);
+  padding: var(--sap-spacing-xs);
+  border-bottom: 1px solid var(--sap-border-color);
+  vertical-align: top;
+}
+
+.data-table th:nth-child(1), /* ID */
+.data-table td:nth-child(1) {
+  width: 60px;
+  min-width: 60px;
+}
+
+.data-table th:nth-child(2), /* Loja */
+.data-table td:nth-child(2) {
+  width: 80px;
+  min-width: 80px;
+}
+
+.data-table th:nth-child(3), /* Remessa */
+.data-table td:nth-child(3) {
+  width: 120px;
+  min-width: 120px;
+}
+
+.data-table th:nth-child(4), /* Código */
+.data-table td:nth-child(4) {
+  width: 120px;
+  min-width: 120px;
+}
+
+.data-table th:nth-child(5), /* Descrição */
+.data-table td:nth-child(5) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.data-table td:nth-child(5) {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 300px;
+}
+
+
+.data-table th:nth-child(6), /* Qtde Emb */
+.data-table td:nth-child(6) {
+  width: 80px;
+  min-width: 80px;
+  text-align: right;
+}
+
+.data-table th:nth-child(7), /* Status */
+.data-table td:nth-child(7) {
+  width: 100px;
+  min-width: 100px;
+}
+
+.data-table th:nth-child(8), /* Data */
+.data-table td:nth-child(8) {
+  width: 140px;
+  min-width: 140px;
+}
+
+.data-table th:nth-child(9), /* Ações */
+.data-table td:nth-child(9) {
+  width: 80px;
+  min-width: 80px;
+  text-align: center;
 }
 
 .product-info strong {
@@ -1273,3 +1347,842 @@ input:checked + .toggle-slider:before {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Estilos adicionais para o módulo de embalagem */
+
+/* Dashboard Stats Section */
+.dashboard-stats-section {
+  margin-bottom: var(--sap-spacing-xl);
+}
+
+.dashboard-stats-section .stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.stat-card.pending {
+  border-left: 4px solid var(--sap-warning-color);
+}
+
+.stat-card.processing {
+  border-left: 4px solid var(--sap-brand-color);
+}
+
+.stat-card.success {
+  border-left: 4px solid var(--sap-success-color);
+}
+
+.stat-card.pending .stat-icon {
+  color: var(--sap-warning-color);
+}
+
+.stat-card.processing .stat-icon {
+  color: var(--sap-brand-color);
+}
+
+.stat-card.success .stat-icon {
+  color: var(--sap-success-color);
+}
+
+/* Actions Section */
+.actions-section {
+  margin-bottom: var(--sap-spacing-xl);
+}
+
+.action-card {
+  background: var(--sap-surface);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow);
+  transition: var(--sap-transition);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.action-card:hover {
+  box-shadow: var(--sap-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.action-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sap-spacing-m);
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.action-card .card-icon {
+  font-size: 2rem;
+  color: var(--sap-brand-color);
+}
+
+.placeholder-card {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.placeholder-card:hover {
+  transform: none;
+  box-shadow: var(--sap-shadow);
+}
+
+.placeholder-card .card-icon {
+  color: var(--sap-text-muted);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--sap-spacing-m);
+}
+
+.modal-container {
+  background: var(--sap-surface);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow-hover);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sap-spacing-m);
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--sap-text-color);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--sap-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--sap-border-radius);
+  transition: var(--sap-transition);
+}
+
+.modal-close:hover {
+  background: var(--sap-border-color);
+  color: var(--sap-text-color);
+}
+
+.modal-content {
+  padding: var(--sap-spacing-m);
+}
+
+.modal-footer {
+  display: flex;
+  gap: var(--sap-spacing-s);
+  justify-content: flex-end;
+  padding: var(--sap-spacing-m);
+  border-top: 1px solid var(--sap-border-color);
+}
+
+/* Upload Section */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sap-spacing-m);
+}
+
+.upload-info h4 {
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.upload-instructions {
+  color: var(--sap-text-muted);
+  font-size: 0.875rem;
+  margin-left: var(--sap-spacing-m);
+}
+
+.upload-instructions li {
+  margin-bottom: 0.5rem;
+}
+
+.file-upload-area {
+  border: 2px dashed var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-xl);
+  text-align: center;
+  transition: var(--sap-transition);
+  cursor: pointer;
+}
+
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+  border-color: var(--sap-brand-color);
+  background: rgba(0, 112, 242, 0.05);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  color: var(--sap-text-muted);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.upload-text {
+  color: var(--sap-text-muted);
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.file-info {
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-m);
+  background: var(--sap-background);
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-s);
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  color: var(--sap-brand-color);
+}
+
+.file-name {
+  font-weight: 500;
+  color: var(--sap-text-color);
+  flex: 1;
+}
+
+.file-size {
+  color: var(--sap-text-muted);
+  font-size: 0.875rem;
+}
+
+.remove-file {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--sap-error-color);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--sap-border-radius);
+  transition: var(--sap-transition);
+}
+
+.remove-file:hover {
+  background: rgba(218, 41, 41, 0.1);
+}
+
+/* Upload Progress */
+.upload-progress {
+  text-align: center;
+  padding: var(--sap-spacing-xl);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--sap-border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--sap-brand-color);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-text {
+  color: var(--sap-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Upload Result */
+.upload-result {
+  text-align: center;
+  padding: var(--sap-spacing-m);
+}
+
+.result-icon {
+  font-size: 4rem;
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.result-icon.success {
+  color: var(--sap-success-color);
+}
+
+.result-icon.error {
+  color: var(--sap-error-color);
+}
+
+.result-title {
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.result-message {
+  color: var(--sap-text-muted);
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.upload-summary {
+  background: var(--sap-background);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-m);
+  text-align: left;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item.warning {
+  color: var(--sap-warning-color);
+}
+
+.summary-label {
+  font-weight: 500;
+  color: var(--sap-text-color);
+}
+
+.summary-value {
+  font-weight: 600;
+  color: var(--sap-text-color);
+}
+
+.summary-item.warning .summary-label,
+.summary-item.warning .summary-value {
+  color: var(--sap-warning-color);
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: var(--sap-spacing-s);
+  }
+  
+  .modal-container {
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .file-upload-area {
+    padding: var(--sap-spacing-l);
+  }
+  
+  .upload-icon {
+    font-size: 2rem;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .selected-file {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .file-name {
+    word-break: break-all;
+  }
+}
+
+/* Status badges específicos para embalagem */
+.status-badge.Pendente {
+  background: #fff4e6;
+  color: var(--sap-warning-color);
+}
+
+.status-badge.em_separacao {
+  background: #e3f2fd;
+  color: var(--sap-brand-color);
+}
+
+.status-badge.Finalizado {
+  background: #e8f5e8;
+  color: var(--sap-success-color);
+}
+
+.status-badge.Faturado {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+[data-theme="dark"] .status-badge.Pendente {
+  background: rgba(223, 110, 0, 0.2);
+}
+
+[data-theme="dark"] .status-badge.em_separacao {
+  background: rgba(0, 112, 242, 0.2);
+}
+
+[data-theme="dark"] .status-badge.Finalizado {
+  background: rgba(48, 145, 76, 0.2);
+}
+
+[data-theme="dark"] .status-badge.Faturado {
+  background: rgba(123, 31, 162, 0.2);
+}
+
+/* Animações adicionais */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.upload-progress .progress-fill {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Estilos para notificações específicas do upload */
+.notification.upload-success {
+  background: var(--sap-success-color);
+  border-left: 4px solid #2e7d32;
+}
+
+.notification.upload-error {
+  background: var(--sap-error-color);
+  border-left: 4px solid #c62828;
+}
+
+.notification.upload-warning {
+  background: var(--sap-warning-color);
+  border-left: 4px solid #ef6c00;
+}
+
+/* Estilos para o modal de visualização de dados */
+
+.large-modal .modal-container {
+  max-width: 98vw;
+  width: 98vw;
+  max-height: 98vh;
+  height: 98vh;
+  margin: 1vh auto;
+}
+
+.large-modal .modal-content {
+  padding: var(--sap-spacing-s);
+  height: calc(100% - 120px); /* Descontar header e footer */
+  overflow-y: auto;
+}
+
+.data-filters-section {
+  background: var(--sap-background);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-s);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.filters-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--sap-spacing-s);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.filter-group label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--sap-text-color);
+  text-transform: uppercase;
+}
+
+.filters-actions {
+  display: flex;
+  gap: var(--sap-spacing-xs);
+  flex-wrap: wrap;
+}
+
+.filters-actions .btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.data-info-section {
+  margin-bottom: var(--sap-spacing-xs);
+  padding: var(--sap-spacing-xs);
+  background: var(--sap-surface);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+}
+
+.data-summary {
+  display: flex;
+  gap: var(--sap-spacing-l);
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: var(--sap-text-muted);
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.data-table-section {
+  background: var(--sap-surface);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  overflow: hidden;
+  margin-bottom: var(--sap-spacing-s);
+  height: calc(100vh - 400px); /* Altura fixa baseada na viewport */
+  min-height: 400px;
+  overflow: auto;
+}
+
+.table-loading,
+.table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sap-spacing-xl);
+  text-align: center;
+  height: 300px;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sap-spacing-s);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: var(--sap-text-muted);
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.table-empty h4 {
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-xs);
+}
+
+.table-empty p {
+  color: var(--sap-text-muted);
+}
+
+.pagination-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--sap-spacing-xs);
+  background: var(--sap-surface);
+  border-top: 1px solid var(--sap-border-color);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.page-btn {
+  min-width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid var(--sap-border-color);
+  background: var(--sap-surface);
+  color: var(--sap-text-color);
+  border-radius: var(--sap-border-radius);
+  cursor: pointer;
+  transition: var(--sap-transition);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-btn:hover {
+  background: var(--sap-border-color);
+}
+
+.page-btn.active {
+  background: var(--sap-brand-color);
+  border-color: var(--sap-brand-color);
+  color: white;
+}
+
+.page-ellipsis {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  color: var(--sap-text-muted);
+  font-size: 0.75rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+
+
+/* Estilos para detalhes do registro */
+.record-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--sap-spacing-m);
+}
+
+.detail-section {
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  padding: var(--sap-spacing-m);
+  background: var(--sap-background);
+}
+
+.detail-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-m);
+  padding-bottom: var(--sap-spacing-xs);
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.detail-section .detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--sap-spacing-xs) 0;
+  border-bottom: 1px solid var(--sap-border-color);
+}
+
+.detail-section .detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-section .detail-label {
+  font-weight: 500;
+  color: var(--sap-text-muted);
+  flex: 0 0 40%;
+}
+
+.detail-section .detail-value {
+  color: var(--sap-text-color);
+  flex: 1;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Responsive para modals */
+@media (max-width: 768px) {
+  .large-modal .modal-container {
+    max-width: 100vw;
+    width: 100vw;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-actions {
+    flex-direction: column;
+  }
+  
+  .data-summary {
+    flex-direction: column;
+    gap: var(--sap-spacing-xs);
+  }
+  
+  .data-table-section {
+    max-height: 50vh;
+  }
+  
+  .pagination-controls {
+    flex-direction: column;
+    gap: var(--sap-spacing-s);
+  }
+  
+  .record-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-section .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .detail-section .detail-value {
+    text-align: left;
+  }
+}
+
+/* Estilos para tabela responsiva */
+@media (max-width: 1024px) {
+  .data-table th:nth-child(4),
+  .data-table td:nth-child(4),
+  .data-table th:nth-child(5),
+  .data-table td:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .data-table th:nth-child(3),
+  .data-table td:nth-child(3),
+  .data-table th:nth-child(6),
+  .data-table td:nth-child(6) {
+    display: none;
+  }
+}
+
+/* Animações para tabela */
+.data-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--sap-background);
+}
+
+/* Estados de loading na tabela */
+.table-loading .spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--sap-border-color);
+  border-top: 3px solid var(--sap-brand-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.data-table .status-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Scroll personalizado para modal */
+.data-table-section::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.data-table-section::-webkit-scrollbar-track {
+  background: var(--sap-background);
+}
+
+.data-table-section::-webkit-scrollbar-thumb {
+  background: var(--sap-border-color);
+  border-radius: 4px;
+}
+
+.data-table-section::-webkit-scrollbar-thumb:hover {
+  background: var(--sap-text-muted);
+}
+
+.data-table-section::-webkit-scrollbar-corner {
+  background: var(--sap-background);
+}
+
+/* Melhorias de acessibilidade */
+.page-btn:focus,
+.btn:focus {
+  outline: 2px solid var(--sap-brand-color);
+  outline-offset: 2px;
+}
+
+/* Indicadores visuais para filtros ativos */
+.filter-group.has-value input,
+.filter-group.has-value select {
+  border-color: var(--sap-brand-color);
+  background-color: rgba(0, 112, 242, 0.05);
+}
+
+/* Estados de carregamento */
+.filters-actions .btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.filters-actions .btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+
