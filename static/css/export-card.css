@@ -1,0 +1,209 @@
+/* CSS específico para o card de exportação de dados */
+
+.export-card {
+  background: var(--sap-surface);
+  border: 1px solid var(--sap-border-color);
+  border-radius: var(--sap-border-radius);
+  box-shadow: var(--sap-shadow);
+  transition: var(--sap-transition);
+  overflow: hidden;
+}
+
+.export-card:hover {
+  box-shadow: var(--sap-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.export-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sap-spacing-m);
+  border-bottom: 1px solid var(--sap-border-color);
+  background: linear-gradient(135deg, var(--sap-surface) 0%, var(--sap-background) 100%);
+}
+
+.export-card .card-icon {
+  font-size: 2rem;
+  color: var(--sap-success-color);
+}
+
+.export-card .card-content {
+  padding: var(--sap-spacing-m);
+}
+
+.export-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sap-spacing-s);
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.export-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.export-filter-group label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sap-text-color);
+  text-transform: uppercase;
+}
+
+.export-options {
+  margin-bottom: var(--sap-spacing-m);
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: var(--sap-spacing-xs);
+  padding: var(--sap-spacing-xs) 0;
+}
+
+.export-option input[type="radio"] {
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--sap-brand-color);
+}
+
+.export-option label {
+  font-size: 0.875rem;
+  color: var(--sap-text-color);
+  cursor: pointer;
+  margin: 0;
+  text-transform: none;
+}
+
+.export-progress {
+  display: none;
+  text-align: center;
+  padding: var(--sap-spacing-m);
+}
+
+.export-progress .progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--sap-border-color);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.export-progress .progress-fill {
+  height: 100%;
+  background: var(--sap-success-color);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.export-progress-text {
+  font-size: 0.8125rem;
+  color: var(--sap-text-muted);
+}
+
+.export-result {
+  display: none;
+  text-align: center;
+  padding: var(--sap-spacing-m);
+}
+
+.export-result-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.export-result-icon.success {
+  color: var(--sap-success-color);
+}
+
+.export-result-icon.error {
+  color: var(--sap-error-color);
+}
+
+.export-result-message {
+  font-size: 0.875rem;
+  color: var(--sap-text-color);
+  margin-bottom: var(--sap-spacing-s);
+}
+
+.export-result-details {
+  font-size: 0.8125rem;
+  color: var(--sap-text-muted);
+}
+
+.export-download-btn {
+  margin-top: var(--sap-spacing-s);
+  background: var(--sap-success-color);
+  border-color: var(--sap-success-color);
+  color: white;
+}
+
+.export-download-btn:hover {
+  background: #2d7a3f;
+  border-color: #2d7a3f;
+}
+
+/* Estados dos filtros */
+.export-filters-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.export-option.active label {
+  font-weight: 600;
+  color: var(--sap-brand-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .export-filters {
+    grid-template-columns: 1fr;
+  }
+  
+  .export-card .card-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--sap-spacing-xs);
+  }
+  
+  .export-option {
+    justify-content: flex-start;
+  }
+}
+
+/* Animações */
+@keyframes exportPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.export-progress .progress-fill {
+  animation: exportPulse 1.5s ease-in-out infinite;
+}
+
+.export-card.processing {
+  border-color: var(--sap-success-color);
+  box-shadow: 0 0 0 2px rgba(48, 145, 76, 0.1);
+}
+
+.export-card.success {
+  border-color: var(--sap-success-color);
+  background: rgba(48, 145, 76, 0.02);
+}
+
+.export-card.error {
+  border-color: var(--sap-error-color);
+  background: rgba(218, 41, 41, 0.02);
+}

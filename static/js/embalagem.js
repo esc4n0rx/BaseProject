@@ -10,12 +10,14 @@ class EmbalagemModule {
         this.totalPages = 1;
         this.perPage = 50;
         this.currentFilters = {};
+        this.exportInProgress = false;
         
         this.init();
     }
 
     init() {
         this.setupEventListeners();
+        this.setupExportCardListeners();
         this.loadStats();
         
         console.log('🚀 Módulo de Embalagem inicializado');
@@ -52,6 +54,334 @@ class EmbalagemModule {
                 }
             });
         }
+    }
+
+    setupExportCardListeners() {
+        // Event listeners para o card de exportação
+        const exportOptions = document.querySelectorAll('input[name="exportType"]');
+        exportOptions.forEach(option => {
+            option.addEventListener('change', (e) => this.handleExportTypeChange(e));
+        });
+
+        // Inicializar estado dos filtros com evento simulado
+        this.handleExportTypeChange({ target: { value: 'all' }, type: 'init' });
+    }
+
+    handleExportTypeChange(event) {
+        const exportType = event.target.value;
+        const remessaGroup = document.getElementById('remessaFilterGroup');
+        const dateStartGroup = document.getElementById('dateStartGroup');
+        const dateEndGroup = document.getElementById('dateEndGroup');
+        const exportFilters = document.getElementById('exportFilters');
+
+        // Resetar visibilidade
+        [remessaGroup, dateStartGroup, dateEndGroup].forEach(group => {
+            if (group) group.style.display = 'none';
+        });
+
+        // Remover classe de disabled
+        if (exportFilters) {
+            exportFilters.classList.remove('export-filters-disabled');
+        }
+
+        // Mostrar filtros baseado no tipo
+        switch (exportType) {
+            case 'remessa':
+                if (remessaGroup) remessaGroup.style.display = 'flex';
+                break;
+            case 'date':
+                if (dateStartGroup) dateStartGroup.style.display = 'flex';
+                if (dateEndGroup) dateEndGroup.style.display = 'flex';
+                break;
+            case 'all':
+                // Desabilitar filtros para "todos os registros"
+                if (exportFilters) {
+                    exportFilters.classList.add('export-filters-disabled');
+                }
+                break;
+        }
+
+        // Atualizar classes ativas apenas se não for evento de inicialização
+        if (event.type !== 'init') {
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Encontrar o elemento pai usando uma abordagem mais segura
+            let parentOption = event.target.parentElement;
+            while (parentOption && !parentOption.classList.contains('export-option')) {
+                parentOption = parentOption.parentElement;
+            }
+            
+            if (parentOption) {
+                parentOption.classList.add('active');
+            }
+        }
+    }
+
+    async startExport() {
+        if (this.exportInProgress) return;
+
+        try {
+            this.exportInProgress = true;
+            this.showExportProgress();
+
+            // Coletar dados do formulário
+            const exportTypeElement = document.querySelector('input[name="exportType"]:checked');
+            if (!exportTypeElement) {
+                this.showExportError('Nenhum tipo de exportação selecionado.');
+                return;
+            }
+
+            const exportType = exportTypeElement.value;
+            const remessa = document.getElementById('exportRemessa')?.value || '';
+            const dataInicio = document.getElementById('exportDateStart')?.value || '';
+            const dataFim = document.getElementById('exportDateEnd')?.value || '';
+
+            // Validações no frontend
+            if (exportType === 'remessa' && !remessa.trim()) {
+                this.showExportError('Por favor, informe a remessa para exportação.');
+                return;
+            }
+
+            if (exportType === 'date' && !dataInicio && !dataFim) {
+                this.showExportError('Por favor, informe pelo menos uma data para exportação.');
+                return;
+            }
+
+            // Preparar dados para envio
+            const exportData = {
+                export_type: exportType,
+                remessa: remessa.trim(),
+                data_inicio: dataInicio,
+                data_fim: dataFim
+            };
+
+            // Fazer requisição
+            const response = await fetch('/api/embalagem/export-custom', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(exportData)
+            });
+
+            const result = await response.json();
+
+            this.hideExportProgress();
+
+            if (result.success) {
+                this.showExportSuccess(result);
+            } else {
+                this.showExportError(result.error || 'Erro na exportação');
+            }
+
+        } catch (error) {
+            console.error('Erro na exportação:', error);
+            this.hideExportProgress();
+            this.showExportError('Erro de conexão durante a exportação');
+        } finally {
+            this.exportInProgress = false;
+        }
+    }
+
+    showExportProgress() {
+        const card = document.getElementById('exportCard');
+        const content = document.getElementById('exportCardContent');
+        const progress = document.getElementById('exportProgress');
+        const result = document.getElementById('exportResult');
+        const startBtn = document.getElementById('startExportBtn');
+
+        if (card) card.classList.add('processing');
+        if (content) content.style.display = 'none';
+        if (result) result.style.display = 'none';
+        if (progress) progress.style.display = 'block';
+        if (startBtn) startBtn.disabled = true;
+
+        // Simular progresso
+        this.animateExportProgress();
+    }
+
+    animateExportProgress() {
+        const progressFill = document.getElementById('exportProgressFill');
+        const progressText = document.getElementById('exportProgressText');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 90) progress = 90;
+            
+            if (progressFill) progressFill.style.width = `${progress}%`;
+            if (progressText) {
+                if (progress < 30) {
+                    progressText.textContent = 'Coletando dados...';
+                } else if (progress < 60) {
+                    progressText.textContent = 'Processando registros...';
+                } else {
+                    progressText.textContent = 'Gerando arquivo Excel...';
+                }
+            }
+        }, 200);
+
+        this.exportProgressInterval = interval;
+    }
+
+    hideExportProgress() {
+        if (this.exportProgressInterval) {
+            clearInterval(this.exportProgressInterval);
+        }
+
+        const progress = document.getElementById('exportProgress');
+        if (progress) progress.style.display = 'none';
+    }
+
+    showExportSuccess(result) {
+        const card = document.getElementById('exportCard');
+        const content = document.getElementById('exportCardContent');
+        const resultDiv = document.getElementById('exportResult');
+        const resultIcon = document.getElementById('exportResultIcon');
+        const resultMessage = document.getElementById('exportResultMessage');
+        const resultDetails = document.getElementById('exportResultDetails');
+        const downloadBtn = document.getElementById('exportDownloadBtn');
+        const startBtn = document.getElementById('startExportBtn');
+
+        if (card) {
+            card.classList.remove('processing');
+            card.classList.add('success');
+        }
+        
+        if (content) content.style.display = 'none';
+        if (resultDiv) resultDiv.style.display = 'block';
+        
+        if (resultIcon) {
+            resultIcon.textContent = '✅';
+            resultIcon.className = 'export-result-icon success';
+        }
+        
+        if (resultMessage) {
+            resultMessage.textContent = result.message || 'Exportação concluída com sucesso!';
+        }
+        
+        if (resultDetails) {
+            resultDetails.textContent = `${result.total_records} registros exportados`;
+        }
+        
+        if (downloadBtn) {
+            downloadBtn.style.display = 'inline-flex';
+            downloadBtn.onclick = () => this.downloadExportFile(result.download_url, result.filename);
+        }
+
+        if (startBtn) {
+            startBtn.textContent = 'Nova Exportação';
+            startBtn.disabled = false;
+            startBtn.onclick = () => this.resetExportCard();
+        }
+
+        // Auto-reset após 10 segundos
+        setTimeout(() => {
+            if (card && card.classList.contains('success')) {
+                this.resetExportCard();
+            }
+        }, 10000);
+    }
+
+    showExportError(errorMessage) {
+        const card = document.getElementById('exportCard');
+        const content = document.getElementById('exportCardContent');
+        const resultDiv = document.getElementById('exportResult');
+        const resultIcon = document.getElementById('exportResultIcon');
+        const resultMessage = document.getElementById('exportResultMessage');
+        const resultDetails = document.getElementById('exportResultDetails');
+        const downloadBtn = document.getElementById('exportDownloadBtn');
+        const startBtn = document.getElementById('startExportBtn');
+
+        if (card) {
+            card.classList.remove('processing');
+            card.classList.add('error');
+        }
+        
+        if (content) content.style.display = 'none';
+        if (resultDiv) resultDiv.style.display = 'block';
+        
+        if (resultIcon) {
+            resultIcon.textContent = '❌';
+            resultIcon.className = 'export-result-icon error';
+        }
+        
+        if (resultMessage) {
+            resultMessage.textContent = 'Erro na exportação';
+        }
+        
+        if (resultDetails) {
+            resultDetails.textContent = errorMessage;
+        }
+        
+        if (downloadBtn) {
+            downloadBtn.style.display = 'none';
+        }
+
+        if (startBtn) {
+            startBtn.textContent = 'Tentar Novamente';
+            startBtn.disabled = false;
+            startBtn.onclick = () => this.resetExportCard();
+        }
+
+        // Auto-reset após 5 segundos
+        setTimeout(() => {
+            if (card && card.classList.contains('error')) {
+                this.resetExportCard();
+            }
+        }, 5000);
+    }
+
+    resetExportCard() {
+        const card = document.getElementById('exportCard');
+        const content = document.getElementById('exportCardContent');
+        const progress = document.getElementById('exportProgress');
+        const result = document.getElementById('exportResult');
+        const startBtn = document.getElementById('startExportBtn');
+
+        if (card) {
+            card.classList.remove('processing', 'success', 'error');
+        }
+        
+        if (content) content.style.display = 'block';
+        if (progress) progress.style.display = 'none';
+        if (result) result.style.display = 'none';
+        
+        if (startBtn) {
+            startBtn.innerHTML = '<span class="btn-icon">📥</span> Gerar Exportação';
+            startBtn.disabled = false;
+            startBtn.onclick = () => this.startExport();
+        }
+
+        // Resetar formulário
+        const exportAll = document.getElementById('exportAll');
+        if (exportAll) {
+            exportAll.checked = true;
+            this.handleExportTypeChange({ target: { value: 'all' }, type: 'reset' });
+        }
+
+        // Limpar campos
+        const remessaInput = document.getElementById('exportRemessa');
+        const dateStartInput = document.getElementById('exportDateStart');
+        const dateEndInput = document.getElementById('exportDateEnd');
+        
+        if (remessaInput) remessaInput.value = '';
+        if (dateStartInput) dateStartInput.value = '';
+        if (dateEndInput) dateEndInput.value = '';
+    }
+
+    downloadExportFile(downloadUrl, filename) {
+        // Criar link temporário para download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        this.showNotification('Download iniciado', 'success');
     }
 
     async loadStats() {
@@ -452,6 +782,10 @@ class EmbalagemModule {
                         <span class="detail-label">Estoque:</span>
                         <span class="detail-value">${record.Estoque}</span>
                     </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Total Pallets:</span>
+                        <span class="detail-value">${record.Total_Pallets || 'N/A'}</span>
+                    </div>
                 </div>
                 
                 <div class="detail-section">
@@ -568,7 +902,7 @@ class EmbalagemModule {
         }
     }
 
-    // Métodos utilitários (mantidos do código anterior)
+    // Métodos utilitários
     showUploadProgress() {
         const progress = document.getElementById('uploadProgress');
         const modalContent = document.querySelector('.upload-section');
@@ -680,7 +1014,27 @@ class EmbalagemModule {
         if (window.fioriDashboard) {
             window.fioriDashboard.showNotification(message, type);
         } else {
-            alert(message);
+            console.log(`Notification [${type}]: ${message}`);
+            // Fallback simples para notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'error' ? '#da2929' : type === 'success' ? '#30914c' : '#0070f2'};
+                color: white;
+                border-radius: 6px;
+                z-index: 10000;
+                font-size: 14px;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
         }
     }
 }
@@ -814,6 +1168,13 @@ function nextPage() {
 function previousPage() {
     if (window.embalagemModule) {
         window.embalagemModule.previousPage();
+    }
+}
+
+// Funções específicas do card de exportação
+function startExport() {
+    if (window.embalagemModule) {
+        window.embalagemModule.startExport();
     }
 }
 

@@ -130,8 +130,9 @@ def get_data():
             
     except Exception as e:
         logging.error(f"Erro na API de dados: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
-
+        return jsonify({'success': False, 'error': str(e)}
+                      ), 500
+    
 @embalagem_bp.route('/api/embalagem/record/<int:record_id>')
 def get_record_details(record_id):
     """API para obter detalhes de um registro específico"""
@@ -184,4 +185,54 @@ def export_data():
             
     except Exception as e:
         logging.error(f"Erro na exportação: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@embalagem_bp.route('/api/embalagem/export-custom', methods=['POST'])
+def export_custom():
+    """API para exportação customizada do card de exportação"""
+    try:
+        data = request.get_json()
+        
+        export_type = data.get('export_type', 'all')
+        remessa = data.get('remessa', '')
+        data_inicio = data.get('data_inicio', '')
+        data_fim = data.get('data_fim', '')
+        
+        # Validações básicas
+        if export_type == 'remessa' and not remessa:
+            return jsonify({
+                'success': False,
+                'error': 'Remessa é obrigatória para este tipo de exportação'
+            }), 400
+        
+        if export_type == 'date' and not (data_inicio or data_fim):
+            return jsonify({
+                'success': False,
+                'error': 'Pelo menos uma data deve ser informada'
+            }), 400
+        
+        # Processar exportação
+        result = embalagem_service.export_custom_data(
+            export_type=export_type,
+            remessa=remessa,
+            data_inicio=data_inicio,
+            data_fim=data_fim
+        )
+        
+        if result:
+            return jsonify({
+                'success': True,
+                'download_url': result['download_url'],
+                'filename': result['filename'],
+                'total_records': result['total_records'],
+                'message': f'Exportação concluída com sucesso! {result["total_records"]} registros exportados.'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Nenhum registro encontrado para os filtros especificados'
+            }), 404
+            
+    except Exception as e:
+        logging.error(f"Erro na exportação customizada: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500

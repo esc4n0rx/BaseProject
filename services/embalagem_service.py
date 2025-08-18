@@ -333,7 +333,8 @@ class EmbalagemService:
                 SELECT id as ID, Loja, Remessa, Local, Ordem, Posicao_Deposito as 'Posição Depósito', 
                        Codigo as 'Código', Descricao_Produto as 'Descrição Produto', UM, 
                        Qtde_Emb as 'Qtde Embalagem', Qtde_CX as 'Qtde Caixa', Qtde_UM as 'Qtde UM', 
-                       Estoque, EAN, Status, Usuario as 'Usuário', Data_Registro as 'Data Registro'
+                       Estoque, EAN, Status, Usuario as 'Usuário', Data_Registro as 'Data Registro',
+                       Total_Pallets as 'Total Pallets'
                 FROM temp_embalagem
                 {where_clause}
                 ORDER BY Data_Registro DESC, id DESC
@@ -368,6 +369,31 @@ class EmbalagemService:
             
         except Exception as e:
             logging.error(f"Erro na exportação: {e}")
+            return None
+
+    def export_custom_data(self, export_type: str, remessa: str = None, data_inicio: str = None, data_fim: str = None) -> Optional[Dict]:
+        """Exporta dados com filtros customizados do card de exportação"""
+        try:
+            import pandas as pd
+            from datetime import datetime
+            
+            # Construir filtros baseado no tipo de exportação
+            filters = {}
+            
+            if export_type == 'remessa' and remessa:
+                filters['remessa'] = remessa
+            elif export_type == 'date':
+                if data_inicio:
+                    filters['data_inicio'] = data_inicio
+                if data_fim:
+                    filters['data_fim'] = data_fim
+            # Para 'all', não adiciona filtros
+            
+            # Reutilizar método existente
+            return self.export_data(filters, 'excel')
+            
+        except Exception as e:
+            logging.error(f"Erro na exportação customizada: {e}")
             return None
 
 # Instância global do serviço

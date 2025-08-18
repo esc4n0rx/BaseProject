@@ -125,6 +125,77 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Card Exportar Dados -->
+            <div class="export-card" id="exportCard">
+                <div class="card-header">
+                    <h3 class="card-title">Exportar Dados</h3>
+                    <div class="card-icon">📥</div>
+                </div>
+                <div class="card-content" id="exportCardContent">
+                    <p class="card-description">
+                        Exporte dados de embalagem em formato Excel com filtros personalizados.
+                    </p>
+                    
+                    <!-- Opções de Exportação -->
+                    <div class="export-options">
+                        <div class="export-option">
+                            <input type="radio" id="exportAll" name="exportType" value="all" checked>
+                            <label for="exportAll">Todos os registros</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="radio" id="exportByRemessa" name="exportType" value="remessa">
+                            <label for="exportByRemessa">Por remessa específica</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="radio" id="exportByDate" name="exportType" value="date">
+                            <label for="exportByDate">Por período de datas</label>
+                        </div>
+                    </div>
+
+                    <!-- Filtros de Exportação -->
+                    <div class="export-filters" id="exportFilters">
+                        <div class="export-filter-group" id="remessaFilterGroup" style="display: none;">
+                            <label for="exportRemessa">Remessa:</label>
+                            <input type="text" id="exportRemessa" class="form-input" placeholder="Digite a remessa">
+                        </div>
+                        <div class="export-filter-group" id="dateStartGroup" style="display: none;">
+                            <label for="exportDateStart">Data Início:</label>
+                            <input type="date" id="exportDateStart" class="form-input">
+                        </div>
+                        <div class="export-filter-group" id="dateEndGroup" style="display: none;">
+                            <label for="exportDateEnd">Data Fim:</label>
+                            <input type="date" id="exportDateEnd" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progresso da Exportação -->
+                <div class="export-progress" id="exportProgress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="exportProgressFill"></div>
+                    </div>
+                    <p class="export-progress-text" id="exportProgressText">Preparando exportação...</p>
+                </div>
+
+                <!-- Resultado da Exportação -->
+                <div class="export-result" id="exportResult">
+                    <div class="export-result-icon" id="exportResultIcon"></div>
+                    <p class="export-result-message" id="exportResultMessage"></p>
+                    <p class="export-result-details" id="exportResultDetails"></p>
+                    <button class="btn export-download-btn" id="exportDownloadBtn" style="display: none;">
+                        <span class="btn-icon">📥</span>
+                        Download
+                    </button>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn btn-primary btn-full" id="startExportBtn" onclick="startExport()">
+                        <span class="btn-icon">📥</span>
+                        Gerar Exportação
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
