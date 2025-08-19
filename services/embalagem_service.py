@@ -21,17 +21,22 @@ class EmbalagemService:
         os.makedirs('data', exist_ok=True)
     
     def get_dashboard_stats(self) -> Optional[EmbalagemStats]:
-        """Obtém estatísticas para o dashboard"""
+        """Obtém estatísticas para o dashboard - apenas dados do dia atual"""
         try:
-            # Total de remessas únicas
-            query_remessas = "SELECT COUNT(DISTINCT Remessa) as total FROM temp_embalagem"
+            # Total de remessas únicas do dia atual
+            query_remessas = """
+                SELECT COUNT(DISTINCT Remessa) as total 
+                FROM temp_embalagem 
+                WHERE DATE(Data_Registro) = CURDATE()
+            """
             result_remessas = db.execute_query(query_remessas)
             total_remessas = result_remessas[0]['total'] if result_remessas else 0
             
-            # Contagem por status
+            # Contagem por status do dia atual
             query_status = """
                 SELECT Status, COUNT(*) as count 
                 FROM temp_embalagem 
+                WHERE DATE(Data_Registro) = CURDATE()
                 GROUP BY Status
             """
             result_status = db.execute_query(query_status)
@@ -48,13 +53,14 @@ class EmbalagemService:
                     if row['Status'] in status_counts:
                         status_counts[row['Status']] = row['count']
             
-            # Cálculo do percentual de corte
+            # Cálculo do percentual de corte do dia atual
             query_corte = """
                 SELECT 
                     COUNT(*) as total_itens,
                     SUM(CASE WHEN Qtde_Emb = 0 AND Status IN ('Finalizado', 'Faturado') THEN 1 ELSE 0 END) as itens_com_corte
                 FROM temp_embalagem
-                WHERE Status IN ('Finalizado', 'Faturado')
+                WHERE DATE(Data_Registro) = CURDATE()
+                AND Status IN ('Finalizado', 'Faturado')
             """
             result_corte = db.execute_query(query_corte)
             
