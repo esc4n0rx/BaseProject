@@ -3,6 +3,14 @@ Aplicação Flask com estilo SAP Fiori
 Módulos: Embalagem, Shelf Life, Configurações
 """
 
+import sys
+import os
+
+# Adiciona o diretório raiz do projeto (a pasta 'Base') ao caminho de busca do Python
+# Isso garante que importações como 'from routes import ...' funcionem sempre.
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
+
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 import logging
