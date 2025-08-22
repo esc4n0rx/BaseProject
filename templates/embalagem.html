@@ -196,6 +196,75 @@
                     </button>
                 </div>
             </div>
+
+            <!-- NOVO CARD: Exportar Faturamento -->
+            <div class="export-card faturamento-card" id="faturamentoCard">
+                <div class="card-header">
+                    <h3 class="card-title">Exportar Faturamento</h3>
+                    <div class="card-icon">💳</div>
+                </div>
+                <div class="card-content" id="faturamentoCardContent">
+                    <p class="card-description">
+                        Exporte apenas remessas com todos os itens finalizados e atualize status para "Faturado".
+                    </p>
+                    
+                    <!-- Informações das remessas prontas -->
+                    <div class="faturamento-info">
+                        <div class="info-item">
+                            <span class="info-icon">📋</span>
+                            <div class="info-content">
+                                <span class="info-label">Remessas prontas:</span>
+                                <span class="info-value" id="remessasProntas">0</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">📦</span>
+                            <div class="info-content">
+                                <span class="info-label">Total de itens:</span>
+                                <span class="info-value" id="itensProntos">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de remessas (quando houver) -->
+                    <div class="remessas-preview" id="remessasPreview" style="display: none;">
+                        <h5>Remessas que serão faturadas:</h5>
+                        <div class="remessas-list" id="remessasList">
+                            <!-- Lista será preenchida via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progresso do Faturamento -->
+                <div class="export-progress" id="faturamentoProgress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="faturamentoProgressFill"></div>
+                    </div>
+                    <p class="export-progress-text" id="faturamentoProgressText">Processando faturamento...</p>
+                </div>
+
+                <!-- Resultado do Faturamento -->
+                <div class="export-result" id="faturamentoResult">
+                    <div class="export-result-icon" id="faturamentoResultIcon"></div>
+                    <p class="export-result-message" id="faturamentoResultMessage"></p>
+                    <p class="export-result-details" id="faturamentoResultDetails"></p>
+                    <button class="btn export-download-btn" id="faturamentoDownloadBtn" style="display: none;">
+                        <span class="btn-icon">📥</span>
+                        Download
+                    </button>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn btn-secondary btn-full" id="refreshFaturamentoBtn" onclick="refreshFaturamentoInfo()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar Info
+                    </button>
+                    <button class="btn btn-primary btn-full" id="startFaturamentoBtn" onclick="startFaturamento()" disabled>
+                        <span class="btn-icon">💳</span>
+                        Gerar Faturamento
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

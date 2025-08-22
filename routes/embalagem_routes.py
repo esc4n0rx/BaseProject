@@ -236,3 +236,62 @@ def export_custom():
     except Exception as e:
         logging.error(f"Erro na exportação customizada: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+@embalagem_bp.route('/api/embalagem/export-faturamento', methods=['POST'])
+def export_faturamento():
+    """API para exportação de faturamento - apenas remessas com todos os itens finalizados"""
+    try:
+        data = request.get_json()
+        usuario = data.get('usuario', 'Sistema')  # Usuário que está fazendo a exportação
+        
+        # Processar exportação de faturamento
+        result = embalagem_service.export_faturamento(usuario)
+        
+        if result and result['success']:
+            return jsonify({
+                'success': True,
+                'download_url': result['download_url'],
+                'filename': result['filename'],
+                'total_records': result['total_records'],
+                'remessas_faturadas': result['remessas_faturadas'],
+                'message': f'Faturamento exportado com sucesso! {result["remessas_faturadas"]} remessas faturadas com {result["total_records"]} itens.'
+            })
+        elif result and not result['success']:
+            return jsonify({
+                'success': False,
+                'error': result.get('error', 'Erro na exportação de faturamento')
+            }), 400
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Nenhuma remessa completa encontrada para faturamento'
+            }), 404
+            
+    except Exception as e:
+        logging.error(f"Erro na exportação de faturamento: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@embalagem_bp.route('/api/embalagem/remessas-finalizadas')
+def get_remessas_finalizadas():
+    """API para obter estatísticas de remessas prontas para faturamento"""
+    try:
+        stats = embalagem_service.get_remessas_finalizadas_stats()
+        
+        if stats:
+            return jsonify({
+                'success': True,
+                'data': stats
+            })
+        else:
+            return jsonify({
+                'success': True,
+                'data': {
+                    'remessas_completas': 0,
+                    'total_itens': 0,
+                    'remessas_lista': []
+                }
+            })
+            
+    except Exception as e:
+        logging.error(f"Erro ao obter estatísticas de remessas finalizadas: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500

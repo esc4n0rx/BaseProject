@@ -11,6 +11,7 @@ class EmbalagemModule {
         this.perPage = 50;
         this.currentFilters = {};
         this.exportInProgress = false;
+        this.faturamentoInProgress = false;
         
         this.init();
     }
@@ -19,6 +20,7 @@ class EmbalagemModule {
         this.setupEventListeners();
         this.setupExportCardListeners();
         this.loadStats();
+        this.loadFaturamentoInfo();
         
         console.log('🚀 Módulo de Embalagem inicializado');
     }
@@ -117,6 +119,305 @@ class EmbalagemModule {
                 parentOption.classList.add('active');
             }
         }
+    }
+
+    // Métodos para o card de faturamento
+    async loadFaturamentoInfo() {
+        try {
+            const response = await fetch('/api/embalagem/remessas-finalizadas');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.updateFaturamentoDisplay(data.data);
+            } else {
+                console.error('Erro ao carregar info de faturamento:', data.error);
+            }
+        } catch (error) {
+            console.error('Erro na requisição de faturamento:', error);
+        }
+    }
+
+    updateFaturamentoDisplay(data) {
+        const remessasProntas = document.getElementById('remessasProntas');
+        const itensProntos = document.getElementById('itensProntos');
+        const remessasPreview = document.getElementById('remessasPreview');
+        const remessasList = document.getElementById('remessasList');
+        const startFaturamentoBtn = document.getElementById('startFaturamentoBtn');
+
+        if (remessasProntas) remessasProntas.textContent = data.remessas_completas;
+        if (itensProntos) itensProntos.textContent = data.total_itens;
+
+        // Habilitar/desabilitar botão
+        if (startFaturamentoBtn) {
+            startFaturamentoBtn.disabled = data.remessas_completas === 0;
+        }
+
+        // Mostrar preview das remessas se houver
+        if (data.remessas_completas > 0 && remessasPreview && remessasList) {
+            remessasPreview.style.display = 'block';
+            
+            const listHtml = data.remessas_lista.slice(0, 5).map(remessa => 
+                `<div class="remessa-item">
+                    <strong>${remessa.remessa}</strong> - Loja ${remessa.loja} (${remessa.itens} itens)
+                </div>`
+            ).join('');
+            
+            remessasList.innerHTML = listHtml;
+            
+            if (data.remessas_lista.length > 5) {
+                remessasList.innerHTML += `<div class="remessa-item more">E mais ${data.remessas_lista.length - 5} remessas...</div>`;
+            }
+        } else if (remessasPreview) {
+            remessasPreview.style.display = 'none';
+        }
+    }
+
+    async refreshFaturamentoInfo() {
+        const refreshBtn = document.getElementById('refreshFaturamentoBtn');
+        if (refreshBtn) {
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="btn-icon">🔄</span> Atualizando...';
+        }
+        
+        await this.loadFaturamentoInfo();
+        await this.loadStats(); // Também atualizar stats gerais
+        
+        if (refreshBtn) {
+            refreshBtn.disabled = false;
+            refreshBtn.innerHTML = '<span class="btn-icon">🔄</span> Atualizar Info';
+        }
+        
+        this.showNotification('Informações atualizadas', 'success');
+    }
+
+    async startFaturamento() {
+        if (this.faturamentoInProgress) return;
+
+        try {
+            this.faturamentoInProgress = true;
+            this.showFaturamentoProgress();
+
+            // Fazer requisição para processar faturamento
+            const response = await fetch('/api/embalagem/export-faturamento', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    usuario: 'Sistema' // Pode ser obtido do contexto do usuário logado
+                })
+            });
+
+            const result = await response.json();
+
+            this.hideFaturamentoProgress();
+
+            if (result.success) {
+                this.showFaturamentoSuccess(result);
+                // Atualizar informações após sucesso
+                await this.loadFaturamentoInfo();
+                await this.loadStats();
+            } else {
+                this.showFaturamentoError(result.error || 'Erro no faturamento');
+            }
+
+        } catch (error) {
+            console.error('Erro no faturamento:', error);
+            this.hideFaturamentoProgress();
+            this.showFaturamentoError('Erro de conexão durante o faturamento');
+        } finally {
+            this.faturamentoInProgress = false;
+        }
+    }
+
+    showFaturamentoProgress() {
+        const card = document.getElementById('faturamentoCard');
+        const content = document.getElementById('faturamentoCardContent');
+        const progress = document.getElementById('faturamentoProgress');
+        const result = document.getElementById('faturamentoResult');
+        const startBtn = document.getElementById('startFaturamentoBtn');
+        const refreshBtn = document.getElementById('refreshFaturamentoBtn');
+
+        if (card) card.classList.add('processing');
+        if (content) content.style.display = 'none';
+        if (result) result.style.display = 'none';
+        if (progress) progress.style.display = 'block';
+        if (startBtn) startBtn.disabled = true;
+        if (refreshBtn) refreshBtn.disabled = true;
+
+        // Simular progresso
+        this.animateFaturamentoProgress();
+    }
+
+    animateFaturamentoProgress() {
+        const progressFill = document.getElementById('faturamentoProgressFill');
+        const progressText = document.getElementById('faturamentoProgressText');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 20;
+            if (progress > 90) progress = 90;
+            
+            if (progressFill) progressFill.style.width = `${progress}%`;
+            if (progressText) {
+                if (progress < 30) {
+                    progressText.textContent = 'Identificando remessas completas...';
+                } else if (progress < 60) {
+                    progressText.textContent = 'Gerando planilha de faturamento...';
+                } else {
+                    progressText.textContent = 'Atualizando status dos registros...';
+                }
+            }
+        }, 200);
+
+        this.faturamentoProgressInterval = interval;
+    }
+
+    hideFaturamentoProgress() {
+        if (this.faturamentoProgressInterval) {
+            clearInterval(this.faturamentoProgressInterval);
+        }
+
+        const progress = document.getElementById('faturamentoProgress');
+        if (progress) progress.style.display = 'none';
+    }
+
+    showFaturamentoSuccess(result) {
+        const card = document.getElementById('faturamentoCard');
+        const content = document.getElementById('faturamentoCardContent');
+        const resultDiv = document.getElementById('faturamentoResult');
+        const resultIcon = document.getElementById('faturamentoResultIcon');
+        const resultMessage = document.getElementById('faturamentoResultMessage');
+        const resultDetails = document.getElementById('faturamentoResultDetails');
+        const downloadBtn = document.getElementById('faturamentoDownloadBtn');
+        const startBtn = document.getElementById('startFaturamentoBtn');
+        const refreshBtn = document.getElementById('refreshFaturamentoBtn');
+
+        if (card) {
+            card.classList.remove('processing');
+            card.classList.add('success');
+        }
+        
+        if (content) content.style.display = 'none';
+        if (resultDiv) resultDiv.style.display = 'block';
+        
+        if (resultIcon) {
+            resultIcon.textContent = '✅';
+            resultIcon.className = 'export-result-icon success';
+        }
+        
+        if (resultMessage) {
+            resultMessage.textContent = 'Faturamento processado com sucesso!';
+        }
+        
+        if (resultDetails) {
+            resultDetails.textContent = `${result.remessas_faturadas} remessas faturadas com ${result.total_records} itens`;
+        }
+        
+        if (downloadBtn) {
+            downloadBtn.style.display = 'inline-flex';
+            downloadBtn.onclick = () => this.downloadExportFile(result.download_url, result.filename);
+        }
+
+        if (startBtn) {
+            startBtn.textContent = 'Novo Faturamento';
+            startBtn.disabled = true; // Será habilitado quando houver novas remessas
+            startBtn.onclick = () => this.resetFaturamentoCard();
+        }
+
+        if (refreshBtn) {
+            refreshBtn.disabled = false;
+        }
+
+        // Auto-reset após 15 segundos
+        setTimeout(() => {
+            if (card && card.classList.contains('success')) {
+                this.resetFaturamentoCard();
+            }
+        }, 15000);
+    }
+
+    showFaturamentoError(errorMessage) {
+        const card = document.getElementById('faturamentoCard');
+        const content = document.getElementById('faturamentoCardContent');
+        const resultDiv = document.getElementById('faturamentoResult');
+        const resultIcon = document.getElementById('faturamentoResultIcon');
+        const resultMessage = document.getElementById('faturamentoResultMessage');
+        const resultDetails = document.getElementById('faturamentoResultDetails');
+        const downloadBtn = document.getElementById('faturamentoDownloadBtn');
+        const startBtn = document.getElementById('startFaturamentoBtn');
+        const refreshBtn = document.getElementById('refreshFaturamentoBtn');
+
+        if (card) {
+            card.classList.remove('processing');
+            card.classList.add('error');
+        }
+        
+        if (content) content.style.display = 'none';
+        if (resultDiv) resultDiv.style.display = 'block';
+        
+        if (resultIcon) {
+            resultIcon.textContent = '❌';
+            resultIcon.className = 'export-result-icon error';
+        }
+        
+        if (resultMessage) {
+            resultMessage.textContent = 'Erro no faturamento';
+        }
+        
+        if (resultDetails) {
+            resultDetails.textContent = errorMessage;
+        }
+        
+        if (downloadBtn) {
+            downloadBtn.style.display = 'none';
+        }
+
+        if (startBtn) {
+            startBtn.textContent = 'Tentar Novamente';
+            startBtn.disabled = false;
+            startBtn.onclick = () => this.resetFaturamentoCard();
+        }
+
+        if (refreshBtn) {
+            refreshBtn.disabled = false;
+        }
+
+        // Auto-reset após 8 segundos
+        setTimeout(() => {
+            if (card && card.classList.contains('error')) {
+                this.resetFaturamentoCard();
+            }
+        }, 8000);
+    }
+
+    resetFaturamentoCard() {
+        const card = document.getElementById('faturamentoCard');
+        const content = document.getElementById('faturamentoCardContent');
+        const progress = document.getElementById('faturamentoProgress');
+        const result = document.getElementById('faturamentoResult');
+        const startBtn = document.getElementById('startFaturamentoBtn');
+        const refreshBtn = document.getElementById('refreshFaturamentoBtn');
+
+        if (card) {
+            card.classList.remove('processing', 'success', 'error');
+        }
+        
+        if (content) content.style.display = 'block';
+        if (progress) progress.style.display = 'none';
+        if (result) result.style.display = 'none';
+        
+        if (startBtn) {
+            startBtn.innerHTML = '<span class="btn-icon">💳</span> Gerar Faturamento';
+            startBtn.onclick = () => this.startFaturamento();
+        }
+
+        if (refreshBtn) {
+            refreshBtn.disabled = false;
+        }
+
+        // Recarregar informações
+        this.loadFaturamentoInfo();
     }
 
     async startExport() {
@@ -523,6 +824,7 @@ class EmbalagemModule {
             if (data.success) {
                 this.showUploadResult(true, data.message, data.data);
                 this.loadStats(); // Recarregar estatísticas
+                this.loadFaturamentoInfo(); // Recarregar info de faturamento
             } else {
                 this.showUploadResult(false, data.error, data.data);
             }
@@ -1175,6 +1477,19 @@ function previousPage() {
 function startExport() {
     if (window.embalagemModule) {
         window.embalagemModule.startExport();
+    }
+}
+
+// Funções específicas do card de faturamento
+function refreshFaturamentoInfo() {
+    if (window.embalagemModule) {
+        window.embalagemModule.refreshFaturamentoInfo();
+    }
+}
+
+function startFaturamento() {
+    if (window.embalagemModule) {
+        window.embalagemModule.startFaturamento();
     }
 }
 

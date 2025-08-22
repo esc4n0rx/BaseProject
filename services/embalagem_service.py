@@ -402,5 +402,185 @@ class EmbalagemService:
             logging.error(f"Erro na exportação customizada: {e}")
             return None
 
+    def get_remessas_finalizadas_stats(self) -> Optional[Dict]:
+        """Obtém estatísticas de remessas prontas para faturamento"""
+        try:
+            # Buscar remessas onde TODOS os itens estão finalizados
+            query = """
+                SELECT 
+                    r.Remessa,
+                    r.Loja,
+                    COUNT(*) as total_itens
+                FROM temp_embalagem r
+                WHERE r.Remessa NOT IN (
+                    SELECT DISTINCT Remessa 
+                    FROM temp_embalagem 
+                    WHERE Status != 'Finalizado'
+                )
+                AND r.Status = 'Finalizado'
+                GROUP BY r.Remessa, r.Loja
+                ORDER BY r.Remessa, r.Loja
+            """
+            
+            result = db.execute_query(query)
+            
+            if result:
+                remessas_lista = []
+                total_itens = 0
+                
+                for row in result:
+                    remessas_lista.append({
+                        'remessa': row['Remessa'],
+                        'loja': row['Loja'],
+                        'itens': row['total_itens']
+                    })
+                    total_itens += row['total_itens']
+                
+                return {
+                    'remessas_completas': len(remessas_lista),
+                    'total_itens': total_itens,
+                    'remessas_lista': remessas_lista
+                }
+            else:
+                return {
+                    'remessas_completas': 0,
+                    'total_itens': 0,
+                    'remessas_lista': []
+                }
+                
+        except Exception as e:
+            logging.error(f"Erro ao obter estatísticas de remessas finalizadas: {e}")
+            return None
+
+    def export_faturamento(self, usuario: str) -> Optional[Dict]:
+        """
+        Exporta faturamento de remessas completas (todos os itens finalizados)
+        e atualiza status para 'Faturado'
+        """
+        try:
+            import pandas as pd
+            from datetime import datetime
+            
+            # Primeiro, identificar remessas completas (todos os itens finalizados)
+            query_remessas_completas = """
+                SELECT DISTINCT Remessa, Loja
+                FROM temp_embalagem 
+                WHERE Remessa NOT IN (
+                    SELECT DISTINCT Remessa 
+                    FROM temp_embalagem 
+                    WHERE Status != 'Finalizado'
+                )
+                AND Status = 'Finalizado'
+            """
+            
+            remessas_completas = db.execute_query(query_remessas_completas)
+            
+            if not remessas_completas:
+                return {
+                    'success': False,
+                    'error': 'Nenhuma remessa completa encontrada para faturamento'
+                }
+            
+            # Buscar dados para exportação das remessas completas
+            remessas_list = [f"'{row['Remessa']}'" for row in remessas_completas]
+            remessas_in_clause = ','.join(remessas_list)
+            
+            export_query = f"""
+                SELECT 
+                    Remessa,
+                    Loja,
+                    Codigo,
+                    Descricao_Produto,
+                    UM,
+                    Qtde_Emb as Atendido,
+                    Usuario,
+                    COALESCE(Total_Pallets, 0) as Total_Pallets
+                FROM temp_embalagem
+                WHERE Remessa IN ({remessas_in_clause})
+                AND Status = 'Finalizado'
+                ORDER BY Remessa, Loja, Codigo
+            """
+            
+            export_data = db.execute_query(export_query)
+            
+            if not export_data:
+                return {
+                    'success': False,
+                    'error': 'Nenhum dado encontrado para exportação'
+                }
+            
+            # Criar DataFrame
+            df = pd.DataFrame(export_data)
+            
+            # Gerar arquivo Excel
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"faturamento_{timestamp}.xlsx"
+            filepath = os.path.join('data', filename)
+            
+            # Configurar formatação do Excel
+            with pd.ExcelWriter(filepath, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Faturamento', index=False)
+                
+                # Obter workbook e worksheet para formatação
+                workbook = writer.book
+                worksheet = writer.sheets['Faturamento']
+                
+                # Ajustar largura das colunas
+                column_widths = {
+                    'A': 15,  # Remessa
+                    'B': 10,  # Loja
+                    'C': 15,  # Codigo
+                    'D': 40,  # Descricao_Produto
+                    'E': 8,   # UM
+                    'F': 12,  # Atendido
+                    'G': 15,  # Usuario
+                    'H': 15   # Total_Pallets
+                }
+                
+                for col, width in column_widths.items():
+                    worksheet.column_dimensions[col].width = width
+            
+            # Iniciar transação para atualizar status
+            try:
+                # Atualizar status para 'Faturado' e registrar usuário
+                update_query = f"""
+                    UPDATE temp_embalagem 
+                    SET Status = 'Faturado', Usuario = %s
+                    WHERE Remessa IN ({remessas_in_clause})
+                    AND Status = 'Finalizado'
+                """
+                
+                affected_rows = db.execute_query(update_query, (usuario,))
+                
+                logging.info(f"Faturamento processado: {len(remessas_completas)} remessas, {len(export_data)} itens atualizados")
+                
+                return {
+                    'success': True,
+                    'download_url': f'/static/exports/{filename}',
+                    'filename': filename,
+                    'total_records': len(export_data),
+                    'remessas_faturadas': len(remessas_completas),
+                    'affected_rows': affected_rows
+                }
+                
+            except Exception as e:
+                logging.error(f"Erro ao atualizar status para faturado: {e}")
+                # Se der erro na atualização, ainda retorna o arquivo gerado
+                return {
+                    'success': True,
+                    'download_url': f'/static/exports/{filename}',
+                    'filename': filename,
+                    'total_records': len(export_data),
+                    'remessas_faturadas': len(remessas_completas),
+                    'warning': 'Arquivo gerado, mas houve erro ao atualizar status no banco'
+                }
+                
+        except Exception as e:
+            logging.error(f"Erro na exportação de faturamento: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
 # Instância global do serviço
 embalagem_service = EmbalagemService()
